@@ -1,5 +1,7 @@
 import { countCampaigns, listCampaigns } from "@/services/campaigns";
 import { countLeads, listLeads } from "@/services/leads";
+import { listActivities } from "@/services/activities";
+import { getLeadGrowthSeries } from "@/services/analytics";
 import { RecentCampaignsDb, RecentLeadsDb } from "@/components/dashboard/recent-db";
 import { LeadDistributionDb } from "@/components/dashboard/lead-distribution-db";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
@@ -9,9 +11,9 @@ import { DemoDataNotice } from "@/components/dashboard/demo-data-notice";
 import { PageHeader } from "@/components/layout/page-header";
 import { AreaChart } from "@/components/dashboard/charts/area-chart";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { NewCampaignButton } from "@/components/dashboard/new-campaign-button";
-import { Flame, Download, Plus, Snowflake, Sun, Target, Users } from "lucide-react";
+import { ExportLeadsButton } from "@/components/dashboard/export-leads-button";
+import { Flame, Snowflake, Sun, Target, Users } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Overview" };
@@ -25,14 +27,18 @@ export default async function OverviewPage() {
   let leadCounts = { total: 0, hot: 0, warm: 0, cold: 0, byStatus: { new: 0, contacted: 0, replied: 0, qualified: 0, won: 0, lost: 0 } };
   let campaigns: Awaited<ReturnType<typeof listCampaigns>> = [];
   let leads: Awaited<ReturnType<typeof listLeads>> = [];
+  let activities: Awaited<ReturnType<typeof listActivities>> = [];
+  let growthSeries: Awaited<ReturnType<typeof getLeadGrowthSeries>> = [];
   let loadError: string | null = null;
 
   try {
-    [campaignCounts, leadCounts, campaigns, leads] = await Promise.all([
+    [campaignCounts, leadCounts, campaigns, leads, activities, growthSeries] = await Promise.all([
       countCampaigns(),
       countLeads(),
       listCampaigns(),
       listLeads({ sortBy: "recent", sortDir: "desc" }),
+      listActivities(),
+      getLeadGrowthSeries(),
     ]);
   } catch (err) {
     loadError = err instanceof Error ? err.message : "Failed to load dashboard data.";
@@ -46,11 +52,12 @@ export default async function OverviewPage() {
     campaignCounts.draft +
     campaignCounts.completed;
 
-  // Synthetic 12-point trend for the area chart — purely decorative until
-  // real discovery runs land. Grows gently from zero to the current total.
-  const discoveryTrend = Array.from({ length: 12 }, (_, i) =>
-    Math.round((leadCounts.total * (i + 1)) / 12)
-  );
+  const chartData = growthSeries.length > 0
+    ? growthSeries.map((p) => p.count)
+    : Array.from({ length: 12 }, () => 0);
+  const chartLabels = growthSeries.length > 0
+    ? growthSeries.map((p) => p.label)
+    : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   return (
     <>
@@ -60,10 +67,7 @@ export default async function OverviewPage() {
         description="Discovery volume, pipeline temperature, and campaign performance at a glance."
         actions={
           <>
-            <Button variant="secondary" size="sm">
-              <Download />
-              Export
-            </Button>
+            <ExportLeadsButton leads={leads} />
             <NewCampaignButton className="shimmer-btn" />
           </>
         }
@@ -136,11 +140,8 @@ export default async function OverviewPage() {
             </div>
             <AreaChart
               gradientId="overview-discovery"
-              data={discoveryTrend}
-              labels={[
-                "Sep", "Oct", "Nov", "Dec", "Jan", "Feb",
-                "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-              ]}
+              data={chartData}
+              labels={chartLabels}
               className="mt-6 h-44"
             />
           </div>
@@ -155,7 +156,7 @@ export default async function OverviewPage() {
       </div>
 
       <div data-reveal-load className="mt-5" style={{ animationDelay: "0.6s" }}>
-        <ActivityFeed />
+        <ActivityFeed activities={activities} />
       </div>
     </>
   );

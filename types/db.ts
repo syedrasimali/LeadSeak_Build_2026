@@ -11,14 +11,36 @@ export type LeadStatus =
   | "lost";
 export type SearchStatus = "pending" | "running" | "completed" | "failed";
 
+export interface WorkspaceSettings {
+  workspace_name: string;
+  workspace_url: string;
+  region: string;
+  hot_threshold: string;
+  notifications: {
+    discovery_complete: boolean;
+    new_hot_lead: boolean;
+    weekly_digest: boolean;
+  };
+}
+
 export interface Profile {
   id: string;
   user_id: string;
   name: string | null;
   email: string | null;
   avatar_url: string | null;
+  settings: WorkspaceSettings | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface Activity {
+  id: string;
+  user_id: string;
+  kind: "discovery" | "score" | "reply" | "campaign" | "stage" | "lead" | "export";
+  title: string;
+  detail: string | null;
+  created_at: string;
 }
 
 export interface Campaign {
@@ -90,4 +112,4 @@ export type LeadInsert = Omit<
 >;
 export type LeadUpdate = Partial<LeadInsert>;
 
-export type ProfileUpdate = Partial<Pick<Profile, "name" | "avatar_url">>;
+export type ProfileUpdate = Partial<Pick<Profile, "name" | "avatar_url" | "settings">>;

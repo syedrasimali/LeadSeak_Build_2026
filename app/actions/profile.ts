@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { updateProfile, uploadAvatar, removeAvatar } from "@/services/profiles";
+import { updateProfile, uploadAvatar, removeAvatar, updateSettings, deleteAccount } from "@/services/profiles";
+import type { WorkspaceSettings } from "@/types/db";
 
 export async function updateProfileAction(
   formData: FormData
@@ -46,4 +47,22 @@ export async function removeAvatarAction(): Promise<{ error: string | null }> {
   revalidatePath("/dashboard/profile");
   revalidatePath("/dashboard");
   return { error: null };
+}
+
+export async function updateSettingsAction(
+  settings: WorkspaceSettings
+): Promise<{ error: string | null }> {
+  const { error } = await updateSettings(settings);
+  if (error) return { error };
+
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function deleteAccountAction(): Promise<{ error: string | null; redirect: boolean }> {
+  const { error } = await deleteAccount();
+  if (error) return { error, redirect: false };
+
+  return { error: null, redirect: true };
 }

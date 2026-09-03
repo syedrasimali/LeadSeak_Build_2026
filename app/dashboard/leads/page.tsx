@@ -11,9 +11,10 @@ import { LeadsPageClient } from "./client";
 import { DemoDataNotice } from "@/components/dashboard/demo-data-notice";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { PageHeader } from "@/components/layout/page-header";
-import { Button } from "@/components/ui/button";
-import { Flame, Download, SlidersHorizontal, Snowflake, Sun, Users } from "lucide-react";
+import { Flame, Snowflake, Sun, Users } from "lucide-react";
 import { MotionGrid } from "@/components/dashboard/motion-grid";
+import { ExportLeadsButton } from "@/components/dashboard/export-leads-button";
+import { ScoringRulesButton } from "@/components/dashboard/scoring-rules-button";
 
 export const metadata: Metadata = { title: "Leads" };
 export const dynamic = "force-dynamic";
@@ -52,14 +53,8 @@ export default async function LeadsPage() {
         description="Qualified prospects scored against your campaign criteria and sorted by temperature."
         actions={
           <>
-            <Button variant="secondary" size="sm">
-              <Download />
-              Export
-            </Button>
-            <Button variant="secondary" size="sm">
-              <SlidersHorizontal />
-              Scoring rules
-            </Button>
+            <ExportLeadsButton leads={leads} />
+            <ScoringRulesButton />
           </>
         }
       />

@@ -7,15 +7,17 @@ import {
   MoveRight,
   Sparkles,
   Target,
+  UserPlus,
+  Download,
   type LucideIcon,
 } from "lucide-react";
-import { demoActivity, type DemoActivity } from "@/lib/demo-data";
+import type { Activity } from "@/types/db";
 import { registerGSAP, useReducedMotion } from "@/lib/motion";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
 
 const kindConfig: Record<
-  DemoActivity["kind"],
+  Activity["kind"],
   { icon: LucideIcon; className: string }
 > = {
   discovery: {
@@ -38,9 +40,31 @@ const kindConfig: Record<
     icon: Target,
     className: "border-warning/26 bg-warning/12 text-warning-soft",
   },
+  lead: {
+    icon: UserPlus,
+    className: "border-electric-500/26 bg-electric-500/12 text-electric-300",
+  },
+  export: {
+    icon: Download,
+    className: "border-line-strong/26 bg-white/[0.04] text-content-muted",
+  },
 };
 
-function ActivityFeed() {
+function formatRelativeTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return "Just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDays = Math.floor(diffHr / 24);
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function ActivityFeed({ activities }: { activities: Activity[] }) {
   const listRef = React.useRef<HTMLOListElement>(null);
   const reduced = useReducedMotion();
   const [hasAnimated, setHasAnimated] = React.useState(false);
@@ -83,9 +107,14 @@ function ActivityFeed() {
         ref={listRef}
         className="relative flex flex-1 flex-col gap-0 p-5"
       >
-        {demoActivity.map((event, i) => {
+        {activities.length === 0 && (
+          <li className="py-8 text-center text-caption text-content-muted">
+            No activity yet. Events will appear here as you work.
+          </li>
+        )}
+        {activities.map((event, i) => {
           const { icon: Icon, className } = kindConfig[event.kind];
-          const isLast = i === demoActivity.length - 1;
+          const isLast = i === activities.length - 1;
 
           return (
             <li
@@ -93,7 +122,6 @@ function ActivityFeed() {
               className="relative flex gap-3 pb-5 last:pb-0 transition-colors duration-200 rounded-md px-2 -mx-2 hover:bg-white/[0.02]"
               style={reduced ? undefined : { opacity: 0 }}
             >
-              {/* Timeline rail */}
               {!isLast && (
                 <span
                   aria-hidden
@@ -114,11 +142,13 @@ function ActivityFeed() {
                 <p className="text-small font-medium text-content">
                   {event.title}
                 </p>
-                <p className="mt-0.5 text-caption text-content-secondary">
-                  {event.detail}
-                </p>
+                {event.detail && (
+                  <p className="mt-0.5 text-caption text-content-secondary">
+                    {event.detail}
+                  </p>
+                )}
                 <p className="mt-1 font-mono text-[0.625rem] text-content-disabled">
-                  {event.at}
+                  {formatRelativeTime(event.created_at)}
                 </p>
               </div>
             </li>

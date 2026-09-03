@@ -144,3 +144,60 @@ export async function getAvatarUrl(): Promise<string | null> {
 
   return profile?.avatar_url ?? null;
 }
+
+export async function getSettings(): Promise<Profile["settings"]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("settings")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return profile?.settings ?? null;
+}
+
+export async function updateSettings(
+  settings: Profile["settings"]
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ settings, updated_at: new Date().toISOString() })
+    .eq("user_id", user.id);
+
+  if (error) return { error: error.message };
+  return { error: null };
+}
+
+export async function deleteAccount(): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  // Delete avatar files first
+  const { data: files } = await supabase.storage
+    .from("avatars")
+    .list(user.id);
+
+  if (files && files.length > 0) {
+    const paths = files.map((f) => `${user.id}/${f.name}`);
+    await supabase.storage.from("avatars").remove(paths);
+  }
+
+  // Call the RPC function to delete all data + auth user
+  const { error } = await supabase.rpc("delete_my_account");
+  if (error) return { error: error.message };
+  return { error: null };
+}
