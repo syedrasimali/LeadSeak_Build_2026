@@ -1,0 +1,2 @@
+# utils
+Pure helper functions live here. Use `lib/utils.ts` for the shared `cn` utility.

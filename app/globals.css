@@ -1,0 +1,709 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   LeadSeak Design System — tokens
+   ========================================================================== */
+
+@theme {
+  /* ---------- Surfaces ----------
+     Named "canvas" rather than "base" so `text-canvas` cannot collide with
+     Tailwind's built-in `text-base` font-size utility. */
+  --color-canvas: #040610;
+  --color-canvas-subtle: #070b16;
+  --color-surface: #0b1020;
+  --color-surface-elevated: #101829;
+  --color-surface-hover: #151e32;
+
+  /* ---------- Borders ---------- */
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-strong: rgba(255, 255, 255, 0.14);
+  --color-line-subtle: rgba(255, 255, 255, 0.045);
+
+  /* ---------- Text ---------- */
+  --color-content: #eaeff8;
+  --color-content-secondary: #9aa6bd;
+  --color-content-muted: #7b869c;
+  --color-content-disabled: #454f62;
+
+  /* ---------- Electric blue (primary accent) ---------- */
+  --color-electric-50: #eef5ff;
+  --color-electric-100: #d9e9ff;
+  --color-electric-200: #b8d6ff;
+  --color-electric-300: #80b4ff;
+  --color-electric-400: #5494ff;
+  --color-electric-500: #3478ff;
+  --color-electric-600: #1e5ff0;
+  --color-electric-700: #174cc0;
+  --color-electric-800: #153d96;
+  --color-electric-900: #143576;
+
+  /* ---------- Indigo blue (secondary accent) ---------- */
+  --color-indigo-blue-300: #a2a8ff;
+  --color-indigo-blue-400: #7d86ff;
+  --color-indigo-blue-500: #5a6cff;
+  --color-indigo-blue-600: #4450e6;
+  --color-indigo-blue-700: #343db4;
+
+  /* ---------- Status ---------- */
+  --color-success: #10b981;
+  --color-success-soft: #34d399;
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fbbf24;
+  --color-danger: #ef4444;
+  --color-danger-soft: #f87171;
+
+  /* ---------- Typography scale ---------- */
+  --text-display: 3.75rem;
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.032em;
+  --text-display--font-weight: 600;
+
+  --text-h1: 2.75rem;
+  --text-h1--line-height: 1.09;
+  --text-h1--letter-spacing: -0.026em;
+  --text-h1--font-weight: 600;
+
+  --text-h2: 2rem;
+  --text-h2--line-height: 1.18;
+  --text-h2--letter-spacing: -0.021em;
+  --text-h2--font-weight: 600;
+
+  --text-h3: 1.375rem;
+  --text-h3--line-height: 1.32;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h3--font-weight: 600;
+
+  --text-body-lg: 1.0625rem;
+  --text-body-lg--line-height: 1.68;
+  --text-body-lg--letter-spacing: -0.009em;
+
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.65;
+  --text-body--letter-spacing: -0.006em;
+
+  --text-small: 0.8125rem;
+  --text-small--line-height: 1.6;
+  --text-small--letter-spacing: -0.003em;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
+
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.35;
+  --text-label--letter-spacing: 0.002em;
+  --text-label--font-weight: 500;
+
+  --text-overline: 0.6875rem;
+  --text-overline--line-height: 1.3;
+  --text-overline--letter-spacing: 0.14em;
+  --text-overline--font-weight: 600;
+
+  /* ---------- Radii ---------- */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  /* ---------- Controlled shadows ---------- */
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-raised:
+    0 1px 2px 0 rgba(0, 0, 0, 0.45), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+  --shadow-overlay:
+    0 8px 16px -4px rgba(0, 0, 0, 0.6), 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+
+  /* ---------- Motion ---------- */
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-swift: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --animate-shimmer: leadseak-shimmer 1.8s infinite;
+  --animate-fade-in: leadseak-fade-in 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-slide-in-right: leadseak-slide-in-right 0.32s
+    cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-slide-in-left: leadseak-slide-in-left 0.32s
+    cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ---------- Fonts ---------- */
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* ==========================================================================
+   Base layer
+   ========================================================================== */
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* Keep anchor targets clear of the fixed landing navbar. */
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
+
+  /* Scroll reveal — pure CSS, no JavaScript.
+
+     `[data-reveal-load]` animates once on load, for content above the fold
+     where there is no scroll distance to key off.
+
+     `[data-reveal]` is driven by a scroll timeline. It is wrapped in @supports
+     so browsers without scroll-driven animations (currently Firefox) simply
+     render the content visible — the page never depends on script to be
+     readable. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal-load] {
+      animation: leadseak-reveal 700ms var(--ease-premium) both;
+    }
+
+    @supports (animation-timeline: view()) {
+      [data-reveal] {
+        animation-name: leadseak-reveal;
+        animation-fill-mode: both;
+        animation-timing-function: var(--ease-premium);
+        animation-timeline: view();
+        animation-range: entry 6% entry 52%;
+      }
+    }
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-content);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: rgba(52, 120, 255, 0.28);
+    color: var(--color-content);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-electric-500);
+    outline-offset: 2px;
+  }
+
+  /* Refined scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+  }
+}
+
+/* ==========================================================================
+   Utilities — fine gradients & surface treatments
+   ========================================================================== */
+
+/* Hairline top highlight that reads as a lit edge on elevated surfaces. */
+@utility surface-sheen {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.045) 0%,
+    rgba(255, 255, 255, 0) 42%
+  );
+}
+
+/* Restrained blue field for hero/feature areas — not a rainbow, not purple. */
+@utility field-electric {
+  background-image:
+    radial-gradient(
+      68rem 32rem at 50% -14rem,
+      rgba(52, 120, 255, 0.16) 0%,
+      rgba(52, 120, 255, 0) 68%
+    ),
+    radial-gradient(
+      44rem 26rem at 92% 8%,
+      rgba(90, 108, 255, 0.1) 0%,
+      rgba(90, 108, 255, 0) 62%
+    );
+}
+
+/* 1px technical grid, used sparingly behind hero content. */
+@utility grid-technical {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+}
+
+@utility text-gradient-electric {
+  background-image: linear-gradient(
+    120deg,
+    var(--color-content) 0%,
+    var(--color-electric-300) 58%,
+    var(--color-indigo-blue-400) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Fades long scroll regions into the page instead of a hard cut. */
+@utility mask-fade-b {
+  mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+}
+
+@keyframes leadseak-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes leadseak-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes leadseak-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes leadseak-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes leadseak-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Wope-style effects — mouse glow, conic borders, floating particles
+   ========================================================================== */
+
+/* Mouse-tracking glow on cards — set --x/--y from JS onMouseMove */
+@utility card-glow {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      28rem 28rem at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(52, 120, 255, 0.12) 0%,
+      rgba(52, 120, 255, 0) 60%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 0;
+  }
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Conic-gradient spinning border */
+@utility conic-border {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--conic-angle, 0deg),
+      rgba(52, 120, 255, 0.4) 0%,
+      rgba(90, 108, 255, 0.2) 25%,
+      transparent 50%,
+      rgba(52, 120, 255, 0.1) 75%,
+      rgba(52, 120, 255, 0.4) 100%
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    padding: 1px;
+    pointer-events: none;
+    z-index: 1;
+    animation: conic-spin 6s linear infinite;
+  }
+}
+
+@keyframes conic-spin {
+  to {
+    --conic-angle: 360deg;
+  }
+}
+
+@property --conic-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Floating particles */
+@utility floating-particles {
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(52, 120, 255, 0.3) 50%, transparent 50%),
+    radial-gradient(2px 2px at 60% 70%, rgba(90, 108, 255, 0.25) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 80% 20%, rgba(52, 120, 255, 0.2) 50%, transparent 50%),
+    radial-gradient(2px 2px at 40% 80%, rgba(90, 108, 255, 0.2) 50%, transparent 50%),
+    radial-gradient(1px 1px at 90% 50%, rgba(52, 120, 255, 0.25) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 10% 60%, rgba(90, 108, 255, 0.15) 50%, transparent 50%),
+    radial-gradient(1px 1px at 50% 10%, rgba(52, 120, 255, 0.2) 50%, transparent 50%),
+    radial-gradient(2px 2px at 70% 40%, rgba(90, 108, 255, 0.18) 50%, transparent 50%);
+  background-size: 100% 100%;
+  animation: float-particles 20s ease-in-out infinite;
+}
+
+@keyframes float-particles {
+  0%, 100% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 2% 3%;
+  }
+  50% {
+    background-position: -1% 2%;
+  }
+  75% {
+    background-position: 3% -1%;
+  }
+}
+
+/* Light rays from top */
+@utility light-rays {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(52, 120, 255, 0.06) 0%,
+      transparent 40%
+    ),
+    conic-gradient(
+      from 180deg at 50% 0%,
+      transparent 30%,
+      rgba(52, 120, 255, 0.03) 40%,
+      transparent 50%,
+      rgba(90, 108, 255, 0.03) 60%,
+      transparent 70%
+    );
+}
+
+/* Auto-scroll for logo carousel */
+@utility auto-scroll {
+  animation: auto-scroll-x 30s linear infinite;
+}
+
+@keyframes auto-scroll-x {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Glowing CTA button border */
+@utility glow-border {
+  box-shadow:
+    0 0 0 1px rgba(52, 120, 255, 0.3),
+    0 0 12px -2px rgba(52, 120, 255, 0.25),
+    0 0 32px -4px rgba(52, 120, 255, 0.15);
+}
+
+/* Vertical animated lines background */
+@utility vertical-lines {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02) 0px,
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 80px
+  );
+}
+
+/* Glassmorphism card base */
+@utility glass-card {
+  background: rgba(13, 17, 28, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Shimmer effect for CTA buttons */
+@utility shimmer-btn {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: leadseak-shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+/* Scroll progress bar */
+@utility scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-electric-500), var(--color-indigo-blue-500));
+  transform-origin: left;
+  z-index: 9999;
+  transition: transform 0.1s ease-out;
+}
+
+/* Pulse glow animation */
+@utility pulse-glow {
+  animation: pulse-glow-anim 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow-anim {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(52, 120, 255, 0.4),
+      0 0 12px -2px rgba(52, 120, 255, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px rgba(52, 120, 255, 0),
+      0 0 20px -2px rgba(52, 120, 255, 0.4);
+  }
+}
+
+/* 3D tilt card effect */
+@utility tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease-out;
+  &:hover {
+    transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale3d(1.02, 1.02, 1.02);
+  }
+}
+
+/* Section divider animated line */
+@utility section-divider {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-electric-500), transparent);
+    transform: translateX(-50%);
+    transition: width 1.2s ease-out;
+  }
+  &.is-visible::before {
+    width: 80%;
+  }
+}
+
+/* Magnetic hover effect */
+@utility magnetic-hover {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  &:hover {
+    transform: translate(var(--magnetic-x, 0px), var(--magnetic-y, 0px));
+  }
+}
+
+/* Animated gradient text */
+@utility text-gradient-animated {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-content) 0%,
+    var(--color-electric-300) 25%,
+    var(--color-indigo-blue-400) 50%,
+    var(--color-electric-300) 75%,
+    var(--color-content) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-shift 3s linear infinite;
+}
+
+@keyframes gradient-shift {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Floating animation for icons */
+@utility float-animation {
+  animation: float-gentle 3s ease-in-out infinite;
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Stagger fade-in for lists */
+@utility stagger-fade-in {
+  & > * {
+    opacity: 0;
+    animation: leadseak-fade-in 0.6s ease-out forwards;
+  }
+  & > *:nth-child(1) { animation-delay: 0.1s; }
+  & > *:nth-child(2) { animation-delay: 0.2s; }
+  & > *:nth-child(3) { animation-delay: 0.3s; }
+  & > *:nth-child(4) { animation-delay: 0.4s; }
+  & > *:nth-child(5) { animation-delay: 0.5s; }
+  & > *:nth-child(6) { animation-delay: 0.6s; }
+}
+
+/* JS-driven entrance animations: children start hidden until GSAP takes over.
+   The class is added in useLayoutEffect so it never mismatches SSR. */
+.will-animate > * {
+  opacity: 0;
+}
+
+/* Auth page CSS entrance animations — pure CSS, no JS DOM manipulation.
+   Elements start hidden and animate in with staggered delays. */
+@keyframes auth-slide-down {
+  from { opacity: 0; transform: translateY(-20px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes auth-slide-up {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes auth-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-entrance > * { opacity: 0; }
+.auth-entrance .auth-el-1 { animation: auth-slide-down 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards; }
+.auth-entrance .auth-el-2 { animation: auth-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; }
+.auth-entrance .auth-el-6 { animation: auth-fade-in 0.5s ease-out 0.7s forwards; }
+
+/* ── Dashboard entrance animations ── */
+@keyframes dash-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dash-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes dash-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes dash-sidebar-slide {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.dash-entrance > * { opacity: 0; }
+.dash-entrance .dash-el-topbar { animation: dash-fade-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards; }
+.dash-entrance .dash-el-main { animation: dash-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards; }
+
+.dash-topbar-entrance > * { opacity: 0; }
+.dash-topbar-entrance .dash-tb-title { animation: dash-fade-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; }
+.dash-topbar-entrance .dash-tb-actions { animation: dash-fade-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
+
+/* Dashboard background layers — subtle field + grid behind content */
+.dash-bg-layers {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+.dash-bg-layers > div {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- Logo entrance ---------- */
+@keyframes logo-entrance {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(4px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.logo-entrance {
+  animation: logo-entrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* Respect prefers-reduced-motion across all CSS animations and transitions.
+   One-shot reveal animations (forwards fill) still complete, but infinite
+   loops and hover transitions are suppressed. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
