@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { DISCOVERY_LEAD_LIMIT, DISCOVERY_WINDOW_MS } from "@/services/discovery-usage";
 import type { LeadInsert, LeadStatus, LeadUpdate } from "@/types/db";
 
 export async function createLeadAction(
@@ -13,14 +14,15 @@ export async function createLeadAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
 
-  const FREE_PLAN_LEAD_LIMIT = 100;
-  const { count: existingLeadCount } = await supabase
+  const windowStart = new Date(Date.now() - DISCOVERY_WINDOW_MS).toISOString();
+  const { count: leadsInWindow } = await supabase
     .from("leads")
     .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .gte("created_at", windowStart);
 
-  if ((existingLeadCount ?? 0) >= FREE_PLAN_LEAD_LIMIT) {
-    return { error: `You've reached the free plan limit of ${FREE_PLAN_LEAD_LIMIT} leads. Upgrade to add more.` };
+  if ((leadsInWindow ?? 0) >= DISCOVERY_LEAD_LIMIT) {
+    return { error: `You've used all ${DISCOVERY_LEAD_LIMIT} discovery credits for this 24-hour period. Wait for the window to reset.` };
   }
 
   const { data, error } = await supabase

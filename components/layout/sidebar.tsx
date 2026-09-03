@@ -7,6 +7,7 @@ import { Logo } from "@/components/brand/logo";
 import { Badge } from "@/components/ui/badge";
 import { primaryNav, secondaryNav, type NavItem } from "@/lib/navigation";
 import { registerGSAP, useReducedMotion, motionTiming } from "@/lib/motion";
+import { DISCOVERY_LEAD_LIMIT } from "@/lib/discovery-constants";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
 
@@ -64,8 +65,6 @@ function NavLink({
     </Link>
   );
 }
-
-const FREE_PLAN_LEAD_LIMIT = 100;
 
 function Sidebar({ leadCount, onNavigate }: { leadCount: number; onNavigate?: () => void }) {
   const pathname = usePathname();
@@ -176,19 +175,19 @@ function Sidebar({ leadCount, onNavigate }: { leadCount: number; onNavigate?: ()
           <div className="flex items-center justify-between gap-2">
             <p className="text-caption font-medium text-content">Free plan</p>
             <Badge variant="electric" size="sm">
-              {leadCount}/{FREE_PLAN_LEAD_LIMIT}
+              {leadCount}/{DISCOVERY_LEAD_LIMIT}
             </Badge>
           </div>
           <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
             <div
               className="h-full rounded-full bg-gradient-to-r from-electric-500 to-indigo-blue-500 transition-all duration-500"
               style={{
-                width: `${Math.min(Math.round((leadCount / FREE_PLAN_LEAD_LIMIT) * 100), 100)}%`,
+                width: `${Math.min(Math.round((leadCount / DISCOVERY_LEAD_LIMIT) * 100), 100)}%`,
               }}
             />
           </div>
           <p className="mt-2 text-caption text-content-muted">
-            {leadCount} of {FREE_PLAN_LEAD_LIMIT} leads used
+            {leadCount} of {DISCOVERY_LEAD_LIMIT} leads used (24h window)
           </p>
         </div>
 

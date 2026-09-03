@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { searchProspects, ExaApiError } from "@/services/exa";
+import { DISCOVERY_LEAD_LIMIT, DISCOVERY_WINDOW_MS } from "@/services/discovery-usage";
 import type { Campaign } from "@/types/db";
 
 export type DiscoveryStatus =
@@ -93,16 +94,35 @@ export async function discoverProspectsAction(
     };
   }
 
-  const FREE_PLAN_LEAD_LIMIT = 100;
-  const { count: existingLeadCount } = await supabase
+  const windowStart = new Date(Date.now() - DISCOVERY_WINDOW_MS).toISOString();
+
+  const { count: leadsInWindow } = await supabase
     .from("leads")
     .select("*", { count: "exact", head: true })
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .gte("created_at", windowStart);
 
-  if ((existingLeadCount ?? 0) >= FREE_PLAN_LEAD_LIMIT) {
+  if ((leadsInWindow ?? 0) >= DISCOVERY_LEAD_LIMIT) {
+    const { data: oldest } = await supabase
+      .from("leads")
+      .select("created_at")
+      .eq("user_id", user.id)
+      .gte("created_at", windowStart)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    let resetMsg = "You can generate more leads after the 24-hour window resets.";
+    if (oldest) {
+      const resetAt = new Date(
+        new Date(oldest.created_at).getTime() + DISCOVERY_WINDOW_MS
+      );
+      resetMsg = `Limit resets at ${resetAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}.`;
+    }
+
     return {
       status: "error",
-      message: `You've reached the free plan limit of ${FREE_PLAN_LEAD_LIMIT} leads. Upgrade to discover more.`,
+      message: `You've used all ${DISCOVERY_LEAD_LIMIT} discovery credits for this 24-hour period. ${resetMsg}`,
       leadsFound: 0,
       leadsSaved: 0,
       duplicatesSkipped: 0,
@@ -229,6 +249,14 @@ export async function discoverProspectsAction(
         console.error("Failed to save lead scores:", scoreError.message);
       }
     }
+
+    await supabase.from("lead_searches").insert({
+      user_id: user.id,
+      campaign_id: campaignId,
+      query: campaign.industry || campaign.keywords || campaign.target_description || campaign.location || "",
+      status: "completed" as const,
+      result_count: newLeads.length,
+    });
 
     revalidatePath("/dashboard/leads");
     revalidatePath("/dashboard/campaigns");

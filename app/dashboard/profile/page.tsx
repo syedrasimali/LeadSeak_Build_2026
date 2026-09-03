@@ -15,6 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ProfileAvatar } from "@/components/dashboard/profile-avatar";
 import { ProfileForm } from "@/components/dashboard/profile-form";
+import { DISCOVERY_WINDOW_MS, DISCOVERY_LEAD_LIMIT } from "@/lib/discovery-constants";
 
 export const metadata: Metadata = { title: "Profile" };
 export const dynamic = "force-dynamic";
@@ -30,12 +31,14 @@ export default async function ProfilePage() {
   const profile = await ensureProfile();
   const displayName = profile?.name ?? user.email ?? "User";
 
+  const windowStart = new Date(Date.now() - DISCOVERY_WINDOW_MS).toISOString();
   const { count: leadCount } = await supabase
     .from("leads")
-    .select("*", { count: "exact", head: true });
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", windowStart);
 
   const leadsUsed = leadCount ?? 0;
-  const FREE_PLAN_LEAD_LIMIT = 100;
 
   return (
     <>
@@ -61,7 +64,7 @@ export default async function ProfilePage() {
             </div>
             <div className="flex flex-wrap justify-center gap-2">
               <Badge variant="electric" dot>
-                Free plan — {leadsUsed}/{FREE_PLAN_LEAD_LIMIT} leads
+                {leadsUsed}/{DISCOVERY_LEAD_LIMIT} leads (24h window)
               </Badge>
               <Badge variant="outline">Owner</Badge>
             </div>
