@@ -392,7 +392,7 @@ export async function searchProspects(
 
   const response = await exaRequest<ExaSearchResponse>("/search", {
     query,
-    numResults: limit,
+    numResults: limit * 3,
     contents: {
       text: true,
       summary: true,

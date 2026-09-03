@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { searchProspects, ExaApiError } from "@/services/exa";
-import { DISCOVERY_LEAD_LIMIT, DISCOVERY_WINDOW_MS } from "@/services/discovery-usage";
+import { DISCOVERY_LEAD_LIMIT, DISCOVERY_WINDOW_MS, DISCOVERY_BATCH_SIZE } from "@/services/discovery-usage";
 import type { Campaign } from "@/types/db";
 
 export type DiscoveryStatus =
@@ -192,14 +192,18 @@ export async function discoverProspectsAction(
     if (newLeads.length === 0) {
       return {
         status: "completed",
-        message: `Found ${leads.length} prospects but all ${duplicatesSkipped} were duplicates of existing leads.`,
+        message: `All ${leads.length} prospects found are already in your leads. Try adding more specific keywords or changing the industry to discover new prospects.`,
         leadsFound: leads.length,
         leadsSaved: 0,
         duplicatesSkipped,
       };
     }
 
-    const leadsToInsert = newLeads.map((lead) => ({
+    const batch = newLeads.slice(0, DISCOVERY_BATCH_SIZE);
+    const extraSkipped = newLeads.length - batch.length;
+    duplicatesSkipped += extraSkipped;
+
+    const leadsToInsert = batch.map((lead) => ({
       user_id: user.id,
       campaign_id: campaignId,
       company_name: lead.company_name,
@@ -227,7 +231,7 @@ export async function discoverProspectsAction(
     if (insertError) {
       return {
         status: "error",
-        message: `Found ${newLeads.length} new prospects but failed to save: ${insertError.message}`,
+        message: `Found ${batch.length} new prospects but failed to save: ${insertError.message}`,
         leadsFound: leads.length,
         leadsSaved: 0,
         duplicatesSkipped,
@@ -237,9 +241,9 @@ export async function discoverProspectsAction(
     if (insertedLeads && insertedLeads.length > 0) {
       const scoreRecords = insertedLeads.map((inserted, index) => ({
         lead_id: inserted.id,
-        score: newLeads[index].score,
-        temperature: newLeads[index].temperature,
-        reason: newLeads[index].reason,
+        score: batch[index].score,
+        temperature: batch[index].temperature,
+        reason: batch[index].reason,
       }));
 
       const { error: scoreError } = await supabase
@@ -255,14 +259,14 @@ export async function discoverProspectsAction(
       campaign_id: campaignId,
       query: campaign.industry || campaign.keywords || campaign.target_description || campaign.location || "",
       status: "completed" as const,
-      result_count: newLeads.length,
+      result_count: batch.length,
     });
 
     revalidatePath("/dashboard/leads");
     revalidatePath("/dashboard/campaigns");
     revalidatePath("/dashboard");
 
-    const parts = [`Saved ${newLeads.length} new prospects.`];
+    const parts = [`Saved ${batch.length} new prospects.`];
     if (duplicatesSkipped > 0) {
       parts.push(`Skipped ${duplicatesSkipped} duplicates.`);
     }
@@ -271,7 +275,7 @@ export async function discoverProspectsAction(
       status: "completed",
       message: parts.join(" "),
       leadsFound: leads.length,
-      leadsSaved: newLeads.length,
+      leadsSaved: batch.length,
       duplicatesSkipped,
     };
   } catch (error) {
