@@ -118,11 +118,13 @@ function SiteFooter() {
                 Get in touch
               </p>
               <p className="mt-1 text-caption text-content-secondary">
-                hello@leadseak.com
+                alisyedrasim@gmail.com
               </p>
               <div className="mt-3 flex gap-3">
                 <a
-                  href="#"
+                  href="https://x.com/jaffery_for"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Twitter"
                   className="grid size-8 place-items-center rounded-lg border border-line bg-canvas-subtle text-content-muted transition-all duration-200 hover:border-electric-500/24 hover:text-electric-400 hover:float-animation"
                 >
@@ -131,7 +133,9 @@ function SiteFooter() {
                   </svg>
                 </a>
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/in/syed-rasim-ali-329a77354/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="LinkedIn"
                   className="grid size-8 place-items-center rounded-lg border border-line bg-canvas-subtle text-content-muted transition-all duration-200 hover:border-electric-500/24 hover:text-electric-400 hover:float-animation"
                 >
@@ -140,7 +144,9 @@ function SiteFooter() {
                   </svg>
                 </a>
                 <a
-                  href="#"
+                  href="https://github.com/syedrasimali"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="GitHub"
                   className="grid size-8 place-items-center rounded-lg border border-line bg-canvas-subtle text-content-muted transition-all duration-200 hover:border-electric-500/24 hover:text-electric-400 hover:float-animation"
                 >
