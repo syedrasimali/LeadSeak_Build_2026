@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/landing/reveal";
 import { ProductPreview } from "@/components/landing/product-preview";
+import { SmartCtaLink } from "@/components/landing/smart-cta-link";
 import { registerGSAP, useReducedMotion } from "@/lib/motion";
 import gsap from "gsap";
 
@@ -247,8 +247,7 @@ function Hero() {
           </Reveal>
 
           <Reveal load delay={560} className="mt-10">
-            <Link
-              href="/signup"
+            <SmartCtaLink
               className="group relative inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-small font-medium text-content transition-all duration-500 hover:border-white/[0.18] shimmer-btn focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-electric-500"
               style={{
                 background:
@@ -257,7 +256,7 @@ function Hero() {
             >
               Unlimited trial for 14 days
               <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </Link>
+            </SmartCtaLink>
           </Reveal>
 
           <Reveal load delay={660}>

@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/landing/reveal";
+import { SmartCtaLink } from "@/components/landing/smart-cta-link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { registerGSAP, useReducedMotion, motionTiming } from "@/lib/motion";
@@ -99,10 +99,10 @@ function FinalCta() {
               size="lg"
               className="glow-border shimmer-btn pulse-glow h-12 shrink-0"
             >
-              <Link href="/signup">
+              <SmartCtaLink>
                 Try Demo
                 <ArrowRight />
-              </Link>
+              </SmartCtaLink>
             </Button>
           </div>
 
