@@ -104,7 +104,7 @@ function DashboardShell({ children, leadCount }: { children: React.ReactNode; le
 
         <div className={showEntrance ? "dash-entrance flex min-w-0 flex-1 flex-col" : "flex min-w-0 flex-1 flex-col"}>
           <div className="dash-el-topbar">
-            <Topbar onOpenSidebar={() => setMobileOpen(true)} />
+            <Topbar onOpenSidebar={() => setMobileOpen(true)} onOpenCommandMenu={() => commandMenu.onOpenChange(true)} />
           </div>
           <main
             id="main-content"
