@@ -45,7 +45,7 @@ function LandingNav() {
       <header
         data-scrolled={scrolled}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-premium",
+          "fixed inset-x-0 top-0 z-[200] transition-all duration-500 ease-premium",
           "border-b border-transparent",
           "data-[scrolled=true]:border-line data-[scrolled=true]:bg-canvas/80 data-[scrolled=true]:backdrop-blur-2xl",
           "data-[scrolled=true]:shadow-[0_1px_0_0_rgba(255,255,255,0.02)]"

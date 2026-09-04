@@ -162,4 +162,27 @@ function useResetPassword() {
   return { state, submit };
 }
 
-export { useSignIn, useSignUp, useSignOut, useResetPassword, friendlyError };
+function useGoogleAuth() {
+  const [loading, setLoading] = React.useState(false);
+
+  async function signInWithGoogle() {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return;
+    }
+    setLoading(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setLoading(false);
+    }
+  }
+
+  return { signInWithGoogle, loading };
+}
+
+export { useSignIn, useSignUp, useSignOut, useResetPassword, useGoogleAuth, friendlyError };
