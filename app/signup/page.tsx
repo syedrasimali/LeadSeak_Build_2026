@@ -112,9 +112,9 @@ export default function SignupPage() {
         </Button>
 
         <div className="flex items-center gap-3 py-1">
-          <Separator />
+          <Separator className="flex-1" />
           <span className="shrink-0 text-caption text-content-muted">or</span>
-          <Separator />
+          <Separator className="flex-1" />
         </div>
 
         <Field label="Full name" htmlFor="name">
