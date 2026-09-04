@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import {
   BarChart3,
-  Calendar,
-  Download,
   Flame,
-  Gauge,
   Snowflake,
   Sun,
   Users,
@@ -13,12 +10,12 @@ import { PageHeader } from "@/components/layout/page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { MotionGrid } from "@/components/dashboard/motion-grid";
 import { AreaChart } from "@/components/dashboard/charts/area-chart";
-import { BarChart } from "@/components/dashboard/charts/bar-chart";
 import { DonutChart } from "@/components/dashboard/charts/donut-chart";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CampaignPerformance } from "@/components/dashboard/campaign-performance";
+import { DateRangeSelector, ExportButton } from "@/components/dashboard/analytics-actions";
+import type { ExportData } from "@/components/dashboard/analytics-actions";
 import {
   getAnalyticsMetrics,
   getCampaignStats,
@@ -49,15 +46,27 @@ const industryColors = [
   "var(--color-danger)",
 ];
 
-const locationColors = [
-  "var(--color-electric-400)",
-  "var(--color-indigo-blue-400)",
-  "var(--color-success)",
-  "var(--color-warning)",
-  "var(--color-danger)",
-];
+function parseRange(raw: string | string[] | undefined): number {
+  const val = Array.isArray(raw) ? raw[0] : raw;
+  const n = parseInt(val ?? "12", 10);
+  if (isNaN(n) || n < 0) return 12;
+  return n;
+}
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const resolved = searchParams ? await searchParams : {};
+  const rangeMonths = parseRange(resolved.range);
+  const rangeLabel =
+    rangeMonths === 0
+      ? "All time"
+      : rangeMonths <= 30
+        ? `${rangeMonths} days`
+        : `${rangeMonths} months`;
+
   let metrics = { total: 0, hot: 0, warm: 0, cold: 0, activeCampaigns: 0 };
   let growth: { label: string; count: number }[] = [];
   let temperature = { hot: 0, warm: 0, cold: 0 };
@@ -71,7 +80,7 @@ export default async function AnalyticsPage() {
     [metrics, growth, temperature, statusBreakdown, industries, locations, campaignStats] =
       await Promise.all([
         getAnalyticsMetrics(),
-        getLeadGrowthSeries(),
+        getLeadGrowthSeries(rangeMonths),
         getTemperatureDistribution(),
         getLeadStatusBreakdown(),
         getIndustryBreakdown(),
@@ -84,6 +93,15 @@ export default async function AnalyticsPage() {
 
   const hasData = metrics.total > 0;
 
+  const exportData: ExportData = {
+    metrics,
+    growth,
+    temperature,
+    statusBreakdown,
+    industries,
+    locations,
+  };
+
   if (!hasData) {
     return (
       <>
@@ -93,14 +111,8 @@ export default async function AnalyticsPage() {
           description="Which criteria produce revenue, and where prospects fall out of the funnel."
           actions={
             <>
-              <Button variant="secondary" size="sm">
-                <Calendar />
-                Last 12 months
-              </Button>
-              <Button size="sm">
-                <Download />
-                Export report
-              </Button>
+              <DateRangeSelector defaultValue={String(rangeMonths)} />
+              <ExportButton data={exportData} />
             </>
           }
         />
@@ -144,14 +156,8 @@ export default async function AnalyticsPage() {
         description="Which criteria produce revenue, and where prospects fall out of the funnel."
         actions={
           <>
-            <Button variant="secondary" size="sm">
-              <Calendar />
-              Last 12 months
-            </Button>
-            <Button size="sm">
-              <Download />
-              Export report
-            </Button>
+            <DateRangeSelector defaultValue={String(rangeMonths)} />
+            <ExportButton data={exportData} />
           </>
         }
       />
@@ -197,7 +203,7 @@ export default async function AnalyticsPage() {
               </p>
             </div>
             <Badge variant="electric" dot>
-              12 months
+              {rangeLabel}
             </Badge>
           </div>
           <div className="flex flex-1 flex-col justify-end p-5">

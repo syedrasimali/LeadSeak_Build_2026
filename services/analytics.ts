@@ -51,12 +51,22 @@ export async function getLeadGrowthSeries(months = 12): Promise<MonthlyPoint[]> 
     .select("created_at")
     .order("created_at", { ascending: true });
 
-  if (error || !data) return [];
+  if (error || !data || data.length === 0) return [];
 
   const now = new Date();
+  let totalMonths = months;
+
+  if (months <= 0) {
+    const earliest = new Date(data[0].created_at);
+    totalMonths =
+      (now.getFullYear() - earliest.getFullYear()) * 12 +
+      (now.getMonth() - earliest.getMonth()) + 1;
+    if (totalMonths < 1) totalMonths = 1;
+  }
+
   const points: MonthlyPoint[] = [];
 
-  for (let i = months - 1; i >= 0; i--) {
+  for (let i = totalMonths - 1; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const nextDate = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
     const label = date.toLocaleString("en-US", { month: "short" });
