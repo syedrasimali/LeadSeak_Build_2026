@@ -55,7 +55,7 @@ export async function listLeads(
         : filters.sortBy === "recent"
           ? "created_at"
           : "score";
-  const ascending = filters.sortDir === "asc" || filters.sortBy === "recent";
+  const ascending = filters.sortDir === "asc";
   query = query.order(sortCol, { ascending, nullsFirst: false });
 
   const { data, error } = await query;

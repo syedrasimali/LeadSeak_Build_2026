@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { DISCOVERY_LEAD_LIMIT, DISCOVERY_WINDOW_MS } from "@/services/discovery-usage";
+import { createActivity } from "@/services/activities";
 import type { LeadInsert, LeadStatus, LeadUpdate } from "@/types/db";
 
 export async function createLeadAction(
@@ -32,6 +33,11 @@ export async function createLeadAction(
     .single();
 
   if (error) return { error: error.message };
+  await createActivity({
+    kind: "lead",
+    title: "New lead added",
+    detail: input.company_name || input.contact_name || "Manual lead",
+  });
   revalidatePath("/dashboard/leads");
   revalidatePath("/dashboard");
   return { error: null, id: data?.id };
@@ -62,7 +68,14 @@ export async function advanceLeadStageAction(
   id: string,
   status: LeadStatus
 ): Promise<{ error: string | null }> {
-  return updateLeadAction(id, { status });
+  const result = await updateLeadAction(id, { status });
+  if (result.error) return result;
+  await createActivity({
+    kind: "stage",
+    title: `Lead moved to ${status}`,
+    detail: `Stage advanced to ${status}`,
+  });
+  return { error: null };
 }
 
 export async function deleteLeadAction(

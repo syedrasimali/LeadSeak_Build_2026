@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { searchProspects, ExaApiError } from "@/services/exa";
+import { createActivity } from "@/services/activities";
 import { DISCOVERY_LEAD_LIMIT, DISCOVERY_WINDOW_MS, DISCOVERY_BATCH_SIZE } from "@/services/discovery-usage";
 import type { Campaign } from "@/types/db";
 
@@ -260,6 +261,12 @@ export async function discoverProspectsAction(
       query: campaign.industry || campaign.keywords || campaign.target_description || campaign.location || "",
       status: "completed" as const,
       result_count: batch.length,
+    });
+
+    await createActivity({
+      kind: "discovery",
+      title: `Discovered ${batch.length} new leads`,
+      detail: campaign.name || campaign.industry || "Campaign discovery",
     });
 
     revalidatePath("/dashboard/leads");
