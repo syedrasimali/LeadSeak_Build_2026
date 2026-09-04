@@ -42,7 +42,7 @@ export default function SignupPage() {
     setMessage("");
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -56,6 +56,12 @@ export default function SignupPage() {
     if (error) {
       setStatus("error");
       setMessage(friendlyError(error.message ?? ""));
+      return;
+    }
+
+    if (data.user && !data.session) {
+      setStatus("idle");
+      setMessage("Check your inbox — we sent a confirmation link to activate your account.");
       return;
     }
 
@@ -180,6 +186,14 @@ export default function SignupPage() {
           <p
             role="alert"
             className="rounded-md border border-danger/28 bg-danger/[0.08] px-3 py-2 text-caption text-danger-soft"
+          >
+            {message}
+          </p>
+        )}
+
+        {status === "idle" && message && (
+          <p
+            className="rounded-md border border-success/28 bg-success/[0.08] px-3 py-2 text-caption text-success"
           >
             {message}
           </p>

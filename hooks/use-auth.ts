@@ -103,9 +103,16 @@ function useSignUp(redirectTo = "/dashboard") {
     }
     setState({ status: "loading", message: "" });
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
       setState({ status: "error", message: friendlyError(error.message ?? "") });
+      return;
+    }
+    if (data.user && !data.session) {
+      setState({
+        status: "idle",
+        message: "Check your inbox — we sent a confirmation link to activate your account.",
+      });
       return;
     }
     setState(INITIAL);
