@@ -14,6 +14,7 @@ import { DonutChart } from "@/components/dashboard/charts/donut-chart";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CampaignPerformance } from "@/components/dashboard/campaign-performance";
+import { IcpBuilderPanel } from "@/components/dashboard/icp-builder-panel";
 import { DateRangeSelector, ExportButton } from "@/components/dashboard/analytics-actions";
 import type { ExportData } from "@/components/dashboard/analytics-actions";
 import {
@@ -432,6 +433,11 @@ export default async function AnalyticsPage({
       {/* Campaign performance */}
       <div data-reveal-load className="mt-5" style={{ animationDelay: "0.75s" }}>
         <CampaignPerformance campaigns={campaignStats} />
+      </div>
+
+      {/* AI ICP Builder */}
+      <div data-reveal-load className="mt-5" style={{ animationDelay: "0.9s" }}>
+        <IcpBuilderPanel />
       </div>
     </>
   );

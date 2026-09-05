@@ -266,3 +266,252 @@ Best regards`;
 
   return { message, timing, priority };
 }
+
+export interface WebsiteAnalysis {
+  company_overview: string;
+  business_model: string | null;
+  target_audience: string[];
+  strengths: string[];
+  opportunities: string[];
+  tech_stack_hints: string[];
+  competitive_position: string | null;
+  engagement_score: number;
+  data_source: "ai_inferred" | "analyzed";
+}
+
+export interface IcpProfile {
+  ideal_industries: string[];
+  company_size: string;
+  key_characteristics: string[];
+  buying_triggers: string[];
+  decision_makers: string[];
+  pain_points_addressed: string[];
+  fit_score: number;
+}
+
+export function analyzeWebsite(lead: Lead): WebsiteAnalysis {
+  const company = lead.company_name;
+  const industry = lead.industry || "business";
+  const description = lead.description || "";
+
+  const overview = description
+    ? `${company} is a ${industry} company: ${description}`
+    : `${company} operates in the ${industry} sector`;
+
+  const businessModel = inferBusinessModel(industry, description);
+
+  const targetAudience = inferTargetAudience(industry);
+  const strengths = inferStrengths(lead);
+  const opportunities = inferOpportunities(lead);
+  const techStackHints = inferTechStack(lead);
+  const competitivePosition = inferCompetitivePosition(lead);
+
+  let engagementScore = 30;
+  if (lead.website) engagementScore += 15;
+  if (lead.linkedin_url) engagementScore += 15;
+  if (lead.email) engagementScore += 10;
+  if (lead.phone) engagementScore += 10;
+  if (lead.description) engagementScore += 10;
+  if (lead.score >= 70) engagementScore += 10;
+  engagementScore = Math.min(100, engagementScore);
+
+  return {
+    company_overview: overview,
+    business_model: businessModel,
+    target_audience: targetAudience,
+    strengths,
+    opportunities,
+    tech_stack_hints: techStackHints,
+    competitive_position: competitivePosition,
+    engagement_score: engagementScore,
+    data_source: "ai_inferred",
+  };
+}
+
+function inferBusinessModel(industry: string, description: string): string | null {
+  const desc = description.toLowerCase();
+  const ind = industry.toLowerCase();
+
+  if (ind.includes("saas") || ind.includes("software")) return "Subscription-based SaaS";
+  if (ind.includes("ecommerce") || ind.includes("retail")) return "E-commerce / Direct-to-consumer";
+  if (ind.includes("consulting")) return "Professional services / Consulting";
+  if (ind.includes("agency")) return "Agency / Service provider";
+  if (desc.includes("b2b")) return "B2B Solutions";
+  if (desc.includes("b2c")) return "B2C / Consumer-facing";
+  if (desc.includes("marketplace")) return "Marketplace / Platform";
+  return null;
+}
+
+function inferTargetAudience(industry: string): string[] {
+  const audiences: Record<string, string[]> = {
+    saas: ["Small to mid-size businesses", "Technical decision makers", "Operations teams"],
+    technology: ["Enterprise IT departments", "CTOs and VPs of Engineering", "Product teams"],
+    marketing: ["Marketing directors", "Brand managers", "Growth teams"],
+    ecommerce: ["Online shoppers", "Retail customers", "D2C brands"],
+    finance: ["Financial advisors", "CFOs", "Investment managers"],
+    healthcare: ["Healthcare providers", "Practice managers", "Patients"],
+    education: ["Students", "Educators", "Administrators"],
+  };
+
+  const key = industry.toLowerCase();
+  for (const [k, v] of Object.entries(audiences)) {
+    if (key.includes(k)) return v;
+  }
+  return ["Business professionals", "Decision makers", "Operations teams"];
+}
+
+function inferStrengths(lead: Lead): string[] {
+  const strengths: string[] = [];
+
+  if (lead.website) strengths.push("Established online presence");
+  if (lead.linkedin_url) strengths.push("Active professional networking");
+  if (lead.score >= 70) strengths.push("High qualification score indicates strong fit");
+  if (lead.industry) strengths.push(`Clear industry positioning in ${lead.industry}`);
+  if (lead.description) strengths.push("Well-defined business description");
+  if (lead.email && lead.phone) strengths.push("Multiple contact channels available");
+
+  if (strengths.length === 0) {
+    strengths.push("Lead in pipeline for further qualification");
+  }
+
+  return strengths.slice(0, 4);
+}
+
+function inferOpportunities(lead: Lead): string[] {
+  const opportunities: string[] = [];
+
+  if (!lead.website) opportunities.push("Could establish web presence for better visibility");
+  if (!lead.linkedin_url) opportunities.push("Could expand professional network presence");
+  if (lead.temperature === "cold") opportunities.push("Needs nurturing to increase engagement");
+  if (lead.status === "new") opportunities.push("Fresh lead — ideal for initial outreach");
+  if (lead.score < 50) opportunities.push("Score could improve with more data enrichment");
+
+  if (lead.job_title?.toLowerCase().includes("founder") || lead.job_title?.toLowerCase().includes("ceo")) {
+    opportunities.push("Direct access to decision maker");
+  }
+
+  if (opportunities.length === 0) {
+    opportunities.push("Ready for personalized outreach campaign");
+  }
+
+  return opportunities.slice(0, 4);
+}
+
+function inferTechStack(lead: Lead): string[] {
+  const hints: string[] = [];
+  const desc = (lead.description || "").toLowerCase();
+
+  if (desc.includes("react") || desc.includes("next.js")) hints.push("React/Next.js");
+  if (desc.includes("node") || desc.includes("node.js")) hints.push("Node.js");
+  if (desc.includes("python")) hints.push("Python");
+  if (desc.includes("aws") || desc.includes("amazon")) hints.push("AWS");
+  if (desc.includes("shopify")) hints.push("Shopify");
+  if (desc.includes("wordpress")) hints.push("WordPress");
+
+  if (lead.website) hints.push("Has website (tech stack unknown)");
+
+  return hints.length > 0 ? hints.slice(0, 4) : ["Tech stack not determinable from available data"];
+}
+
+function inferCompetitivePosition(lead: Lead): string | null {
+  if (lead.score >= 80) return "Strong market position — well-positioned for partnerships";
+  if (lead.score >= 60) return "Solid presence — growing in their market";
+  if (lead.score >= 40) return "Establishing presence — opportunity to help them scale";
+  if (lead.score > 0) return "Early stage — could benefit from growth solutions";
+  return null;
+}
+
+export function buildIcpProfile(leads: Lead[]): IcpProfile {
+  if (leads.length === 0) {
+    return {
+      ideal_industries: [],
+      company_size: "Unknown",
+      key_characteristics: [],
+      buying_triggers: [],
+      decision_makers: [],
+      pain_points_addressed: [],
+      fit_score: 0,
+    };
+  }
+
+  const industryCounts: Record<string, number> = {};
+  let totalScore = 0;
+  let hotCount = 0;
+  let warmCount = 0;
+  let decisionMakerCount = 0;
+  let withWebsite = 0;
+  let withLinkedin = 0;
+
+  for (const lead of leads) {
+    if (lead.industry) {
+      industryCounts[lead.industry] = (industryCounts[lead.industry] || 0) + 1;
+    }
+    totalScore += lead.score;
+    if (lead.temperature === "hot") hotCount++;
+    if (lead.temperature === "warm") warmCount++;
+    if (lead.job_title?.toLowerCase().includes("founder") ||
+        lead.job_title?.toLowerCase().includes("ceo") ||
+        lead.job_title?.toLowerCase().includes("director") ||
+        lead.job_title?.toLowerCase().includes("head")) {
+      decisionMakerCount++;
+    }
+    if (lead.website) withWebsite++;
+    if (lead.linkedin_url) withLinkedin++;
+  }
+
+  const topIndustries = Object.entries(industryCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([ind]) => ind);
+
+  const avgScore = Math.round(totalScore / leads.length);
+  const hotRatio = hotCount / leads.length;
+  const dmRatio = decisionMakerCount / leads.length;
+
+  const characteristics: string[] = [];
+  if (avgScore >= 60) characteristics.push("High qualification scores (avg 60+)");
+  if (hotRatio >= 0.3) characteristics.push("High proportion of hot leads");
+  if (dmRatio >= 0.4) characteristics.push("Strong decision-maker access");
+  if (withWebsite / leads.length >= 0.5) characteristics.push("Most have established web presence");
+  if (withLinkedin / leads.length >= 0.3) characteristics.push("Active professional networking");
+
+  const buyingTriggers: string[] = [];
+  if (hotRatio >= 0.2) buyingTriggers.push("High intent signals detected");
+  if (dmRatio >= 0.3) buyingTriggers.push("Decision-maker engagement");
+  buyingTriggers.push("Industry-specific needs alignment");
+  if (avgScore >= 50) buyingTriggers.push("Strong qualification fit");
+
+  const decisionMakers: string[] = [];
+  if (dmRatio >= 0.3) {
+    decisionMakers.push("Founders / CEOs");
+    decisionMakers.push("Directors / VPs");
+  }
+  decisionMakers.push("Department heads");
+  decisionMakers.push("Operations managers");
+
+  const painPoints: string[] = [];
+  if (topIndustries.some(i => i.toLowerCase().includes("saas") || i.toLowerCase().includes("tech"))) {
+    painPoints.push("Customer acquisition costs");
+    painPoints.push("Scaling operations");
+  }
+  painPoints.push("Lead qualification efficiency");
+  painPoints.push("Sales pipeline optimization");
+  painPoints.push("Outreach personalization");
+
+  let fitScore = 40;
+  if (avgScore >= 70) fitScore += 20;
+  if (hotRatio >= 0.3) fitScore += 15;
+  if (dmRatio >= 0.3) fitScore += 15;
+  if (topIndustries.length >= 2) fitScore += 10;
+  fitScore = Math.min(100, fitScore);
+
+  return {
+    ideal_industries: topIndustries,
+    company_size: leads.length >= 10 ? "Small to mid-size businesses" : "Varies",
+    key_characteristics: characteristics.slice(0, 5),
+    buying_triggers: buyingTriggers.slice(0, 4),
+    decision_makers: decisionMakers.slice(0, 4),
+    pain_points_addressed: painPoints.slice(0, 5),
+    fit_score: fitScore,
+  };
+}

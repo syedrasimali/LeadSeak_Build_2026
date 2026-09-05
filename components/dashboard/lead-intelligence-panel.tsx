@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Brain, Lightbulb, Mail, MessageSquare, Target, TrendingUp, CheckCircle2, AlertCircle, Copy, Sparkles } from "lucide-react";
+import { Brain, Lightbulb, Mail, MessageSquare, Target, TrendingUp, CheckCircle2, AlertCircle, Copy, Sparkles, Globe, BarChart3, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getLeadAnalysisAction, getWhyThisLeadAction, generateOutreachAction, generateFollowUpAction } from "@/app/actions/ai";
-import type { AiLeadAnalysis, WhyThisLead } from "@/services/ai";
+import { getLeadAnalysisAction, getWhyThisLeadAction, generateOutreachAction, generateFollowUpAction, getWebsiteAnalysisAction } from "@/app/actions/ai";
+import type { AiLeadAnalysis, WhyThisLead, WebsiteAnalysis } from "@/services/ai";
 
 interface LeadIntelligencePanelProps {
   leadId: string;
@@ -14,11 +14,12 @@ interface LeadIntelligencePanelProps {
 }
 
 export function LeadIntelligencePanel({ leadId, leadScore, leadTemperature }: LeadIntelligencePanelProps) {
-  const [activeTab, setActiveTab] = React.useState<"analysis" | "why" | "outreach" | "followup">("analysis");
+  const [activeTab, setActiveTab] = React.useState<"analysis" | "why" | "outreach" | "followup" | "website">("analysis");
   const [analysis, setAnalysis] = React.useState<AiLeadAnalysis | null>(null);
   const [whyThisLead, setWhyThisLead] = React.useState<WhyThisLead | null>(null);
   const [outreach, setOutreach] = React.useState<string | null>(null);
   const [followUp, setFollowUp] = React.useState<{ message: string; timing: string; priority: string } | null>(null);
+  const [websiteAnalysis, setWebsiteAnalysis] = React.useState<WebsiteAnalysis | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [outreachOptions, setOutreachOptions] = React.useState({
     tone: "professional" as const,
@@ -51,8 +52,14 @@ export function LeadIntelligencePanel({ leadId, leadScore, leadTemperature }: Le
         if (result.data) setFollowUp(result.data);
         setLoading(false);
       });
+    } else if (activeTab === "website" && !websiteAnalysis) {
+      setLoading(true);
+      getWebsiteAnalysisAction(leadId).then((result) => {
+        if (result.data) setWebsiteAnalysis(result.data);
+        setLoading(false);
+      });
     }
-  }, [activeTab, leadId, analysis, whyThisLead, outreach, followUp, outreachOptions]);
+  }, [activeTab, leadId, analysis, whyThisLead, outreach, followUp, outreachOptions, websiteAnalysis]);
 
   const handleRegenerateOutreach = () => {
     setOutreach(null);
@@ -72,6 +79,7 @@ export function LeadIntelligencePanel({ leadId, leadScore, leadTemperature }: Le
   const tabs = [
     { id: "analysis", label: "Analysis", icon: Brain },
     { id: "why", label: "Why This Lead?", icon: Lightbulb },
+    { id: "website", label: "Website", icon: Globe },
     { id: "outreach", label: "Outreach", icon: Mail },
     { id: "followup", label: "Follow-up", icon: MessageSquare },
   ] as const;
@@ -316,6 +324,80 @@ export function LeadIntelligencePanel({ leadId, leadScore, leadTemperature }: Le
                     <Copy className="size-3.5" />
                     {copied ? "Copied!" : "Copy"}
                   </Button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "website" && websiteAnalysis && (
+              <div className="space-y-4">
+                <div>
+                  <p className="text-caption text-content-muted">Company Overview</p>
+                  <p className="mt-1 text-small text-content">{websiteAnalysis.company_overview}</p>
+                </div>
+
+                {websiteAnalysis.business_model && (
+                  <div>
+                    <p className="text-caption text-content-muted">Business Model</p>
+                    <p className="mt-1 text-small text-content">{websiteAnalysis.business_model}</p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="size-4 text-electric-400" />
+                    <p className="text-caption font-medium text-content">Engagement Score</p>
+                  </div>
+                  <div className="ml-auto flex items-center gap-2">
+                    <div className="h-2 w-20 overflow-hidden rounded-full bg-line">
+                      <div
+                        className="h-full rounded-full bg-electric-400 transition-all"
+                        style={{ width: `${websiteAnalysis.engagement_score}%` }}
+                      />
+                    </div>
+                    <span className="text-caption font-medium text-content">{websiteAnalysis.engagement_score}%</span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-caption text-content-muted">Strengths</p>
+                  <div className="mt-1.5 space-y-1.5">
+                    {websiteAnalysis.strengths.map((s, i) => (
+                      <div key={i} className="flex items-center gap-2 text-small text-content">
+                        <CheckCircle2 className="size-3.5 shrink-0 text-success" />
+                        {s}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-caption text-content-muted">Opportunities</p>
+                  <div className="mt-1.5 space-y-1.5">
+                    {websiteAnalysis.opportunities.map((o, i) => (
+                      <div key={i} className="flex items-center gap-2 text-small text-content">
+                        <Zap className="size-3.5 shrink-0 text-electric-400" />
+                        {o}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {websiteAnalysis.competitive_position && (
+                  <div className="rounded-lg border border-electric-400/20 bg-electric-400/5 p-3">
+                    <p className="text-caption font-medium text-electric-400">Competitive Position</p>
+                    <p className="mt-1 text-small text-content">{websiteAnalysis.competitive_position}</p>
+                  </div>
+                )}
+
+                <div>
+                  <p className="text-caption text-content-muted">Target Audience</p>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    {websiteAnalysis.target_audience.map((a, i) => (
+                      <Badge key={i} variant="neutral" className="text-[11px]">
+                        {a}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
