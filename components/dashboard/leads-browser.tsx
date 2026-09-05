@@ -36,6 +36,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { advanceLeadStageAction, deleteLeadAction } from "@/app/actions/leads";
+import { LeadIntelligencePanel } from "@/components/dashboard/lead-intelligence-panel";
 import { toast } from "@/components/ui/toast";
 import type { Lead, LeadStatus, Temperature } from "@/types/db";
 import { cn } from "@/lib/utils";
@@ -368,6 +369,12 @@ function LeadDetailPanelInner({
               </p>
             </div>
           )}
+
+          <LeadIntelligencePanel
+            leadId={lead.id}
+            leadScore={lead.score}
+            leadTemperature={lead.temperature}
+          />
         </SheetBody>
 
         <SheetFooter className="flex flex-col gap-2.5 sm:flex-row">
