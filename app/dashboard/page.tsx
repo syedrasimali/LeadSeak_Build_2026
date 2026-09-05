@@ -9,6 +9,7 @@ import { MetricCard } from "@/components/dashboard/metric-card";
 import { MotionGrid } from "@/components/dashboard/motion-grid";
 import { DemoDataNotice } from "@/components/dashboard/demo-data-notice";
 import { PageHeader } from "@/components/layout/page-header";
+import { DashboardAiInsights } from "@/components/dashboard/dashboard-ai-insights";
 import { AreaChart } from "@/components/dashboard/charts/area-chart";
 import { Badge } from "@/components/ui/badge";
 import { NewCampaignButton } from "@/components/dashboard/new-campaign-button";
@@ -113,6 +114,10 @@ export default async function OverviewPage() {
           tone="success"
         />
       </MotionGrid>
+
+      <div data-reveal-load className="mt-5" style={{ animationDelay: "0.2s" }}>
+        <DashboardAiInsights leads={leads} leadCounts={leadCounts} />
+      </div>
 
       <div data-reveal-load className="mt-5 grid gap-5 xl:grid-cols-3" style={{ animationDelay: "0.3s" }}>
         <div className="flex flex-col rounded-xl border border-line bg-surface-elevated transition-shadow duration-300 hover:shadow-[0_0_24px_-8px_rgba(52,120,255,0.08)] xl:col-span-2">
