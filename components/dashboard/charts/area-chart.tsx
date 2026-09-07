@@ -27,8 +27,9 @@ function AreaChart({
   // Leave headroom so the peak never touches the top edge.
   const pad = 3;
 
+  const denom = data.length > 1 ? data.length - 1 : 1;
   const points = data.map((value, i) => {
-    const x = (i / (data.length - 1)) * width;
+    const x = (i / denom) * width;
     const y = height - pad - ((value - min) / span) * (height - pad * 2);
     return { x, y };
   });
@@ -94,7 +95,7 @@ function AreaChart({
         <div className="mt-2 flex justify-between">
           {labels.map((label, i) => (
             <span
-              key={label}
+              key={`${i}-${label}`}
               className="min-w-0 truncate text-[0.625rem] tabular-nums text-content-disabled max-sm:[&:nth-child(even)]:hidden"
             >
               {label}

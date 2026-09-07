@@ -15,7 +15,7 @@ function SignInForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") ?? "/dashboard";
   const { state, submit } = useSignIn(redirectTo);
-  const { signInWithGoogle, loading: googleLoading } = useGoogleAuth();
+  const { signInWithGoogle, loading: googleLoading, error: googleError } = useGoogleAuth();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -101,15 +101,16 @@ function SignInForm() {
         </p>
       )}
 
-      <div className="flex items-center justify-between">
-        <label className="flex items-center gap-2 text-caption text-content-secondary">
-          <input
-            type="checkbox"
-            name="remember"
-            className="size-3.5 rounded-xs border-line-strong bg-surface accent-electric-500"
-          />
-          Remember me
-        </label>
+      {googleError && (
+        <p
+          role="alert"
+          className="rounded-md border border-danger/28 bg-danger/[0.08] px-3 py-2 text-caption text-danger-soft"
+        >
+          {googleError}
+        </p>
+      )}
+
+      <div className="flex justify-end">
         <Link
           href="/forgot-password"
           className="text-caption font-medium text-electric-400 underline-offset-4 hover:underline"

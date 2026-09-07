@@ -87,27 +87,28 @@ function FinalCta() {
           </p>
 
           <div className="mt-10 flex w-full max-w-md flex-col gap-3 sm:flex-row">
-            <div className="relative flex-1">
+            <form action="/signup" className="relative flex-1">
               <Input
                 type="email"
+                name="email"
                 placeholder="Enter your work email"
                 className="h-12 rounded-xl border-line bg-surface/60 backdrop-blur-sm pr-4 text-body placeholder:text-content-muted focus:border-electric-500/40 focus:ring-1 focus:ring-electric-500/20"
               />
-            </div>
+            </form>
             <Button
               asChild
               size="lg"
               className="glow-border shimmer-btn pulse-glow h-12 shrink-0"
             >
               <SmartCtaLink>
-                Try Demo
+                Get Started
                 <ArrowRight />
               </SmartCtaLink>
             </Button>
           </div>
 
           <p className="mt-4 text-caption text-content-muted">
-            No credit card required · 14-day unlimited trial
+            100 leads included &middot; Setup in 30 seconds
           </p>
         </Reveal>
       </div>

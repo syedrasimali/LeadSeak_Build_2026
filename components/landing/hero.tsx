@@ -218,7 +218,7 @@ function Hero() {
           <Reveal load delay={100}>
             <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 text-caption font-medium text-content-secondary backdrop-blur-md transition-all duration-300 hover:border-white/[0.14]">
               <span className="size-1.5 rounded-full bg-electric-400 animate-pulse" />
-              AI-Powered Prospect Intelligence
+              AI-Powered B2B Lead Intelligence
             </span>
           </Reveal>
 
@@ -232,17 +232,17 @@ function Hero() {
                 color: "transparent",
               }}
             >
-              The New Era of
+              Find Better Leads.
               <br />
-              Prospect Research
+              Build Faster Sales Pipelines.
             </h1>
           </Reveal>
 
           <Reveal load delay={420}>
             <p className="mt-6 max-w-xl text-body-lg" style={{ color: "rgb(154, 166, 189)" }}>
-              Let our AI do the heavy lifting. Discover qualified prospects,
-              find hidden opportunities, and get clear actionable insights —
-              all in one platform.
+              Discover qualified prospects with AI, enrich every lead with
+              actionable intelligence, and convert more deals — all from one
+              powerful platform.
             </p>
           </Reveal>
 
@@ -254,14 +254,14 @@ function Hero() {
                   "radial-gradient(107% 107% at 50% 215%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%), rgba(255,255,255,0.04)",
               }}
             >
-              Unlimited trial for 14 days
+              Start Free — No Credit Card
               <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </SmartCtaLink>
           </Reveal>
 
           <Reveal load delay={660}>
             <p className="mt-5 text-caption text-content-muted">
-              No credit card required
+              100 leads included &middot; Setup in 30 seconds
             </p>
           </Reveal>
         </div>

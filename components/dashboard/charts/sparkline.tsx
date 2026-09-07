@@ -22,9 +22,10 @@ function Sparkline({ data, className, tone = "electric" }: Sparkline) {
   const span = max - min || 1;
   const pad = 2;
 
+  const denom = data.length > 1 ? data.length - 1 : 1;
   const line = data
     .map((value, i) => {
-      const x = (i / (data.length - 1)) * width;
+      const x = (i / denom) * width;
       const y = height - pad - ((value - min) / span) * (height - pad * 2);
       return `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`;
     })

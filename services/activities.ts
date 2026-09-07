@@ -3,9 +3,15 @@ import type { Activity } from "@/types/db";
 
 export async function listActivities(limit = 20): Promise<Activity[]> {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
   const { data, error } = await supabase
     .from("activities")
     .select("*")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(limit);
 

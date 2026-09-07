@@ -103,6 +103,21 @@ export default async function AnalyticsPage({
     locations,
   };
 
+  if (loadError) {
+    return (
+      <>
+        <PageHeader
+          eyebrow="Reporting"
+          title="Analytics"
+          description="Which criteria produce revenue, and where prospects fall out of the funnel."
+        />
+        <div className="mx-auto mt-8 max-w-md rounded-lg border border-danger/30 bg-danger/10 px-4 py-3 text-center text-small text-danger">
+          {loadError}
+        </div>
+      </>
+    );
+  }
+
   if (!hasData) {
     return (
       <>

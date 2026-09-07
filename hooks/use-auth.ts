@@ -157,7 +157,7 @@ function useResetPassword() {
     setState({ status: "loading", message: "" });
     const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/login`,
+      redirectTo: `${location.origin}/login`,
     });
     if (error) {
       setState({ status: "error", message: friendlyError(error.message ?? "") });
@@ -171,25 +171,33 @@ function useResetPassword() {
 
 function useGoogleAuth() {
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState("");
 
   async function signInWithGoogle() {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      setError("Authentication is not configured.");
       return;
     }
     setLoading(true);
+    setError("");
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${location.origin}/auth/callback`,
       },
     });
-    if (error) {
+    if (oauthError) {
       setLoading(false);
+      setError(friendlyError(oauthError.message ?? ""));
+      return;
+    }
+    if (data.url) {
+      window.location.href = data.url;
     }
   }
 
-  return { signInWithGoogle, loading };
+  return { signInWithGoogle, loading, error };
 }
 
 export { useSignIn, useSignUp, useSignOut, useResetPassword, useGoogleAuth, friendlyError };

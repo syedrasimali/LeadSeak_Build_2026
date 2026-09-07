@@ -50,6 +50,15 @@ const STAGES: LeadStatus[] = [
   "lost",
 ];
 
+const STAGE_LABELS: Record<LeadStatus, string> = {
+  new: "New",
+  contacted: "Contacted",
+  replied: "Interested",
+  qualified: "Qualified",
+  won: "Converted",
+  lost: "Not Interested",
+};
+
 const stageTone: Record<LeadStatus, string> = {
   new: "text-content-muted",
   contacted: "text-electric-300",
@@ -188,18 +197,27 @@ function LeadDetailPanelInner({
   async function advance() {
     if (!next) return;
     setBusy("advance");
-    await advanceLeadStageAction(lead.id, next);
+    const result = await advanceLeadStageAction(lead.id, next);
     setBusy(null);
+    if (result?.error) {
+      toast.error("Could not update lead", { description: result.error });
+      return;
+    }
     onChanged();
     toast.success("Lead updated", {
-      description: `${lead.contact_name ?? lead.company_name} moved to ${next}.`,
+      description: `${lead.contact_name ?? lead.company_name} moved to ${STAGE_LABELS[next]}.`,
     });
   }
 
   async function archive() {
     setBusy("archive");
-    await advanceLeadStageAction(lead.id, lead.status === "lost" ? "won" : "lost");
+    const target = lead.status === "lost" ? "won" : "lost";
+    const result = await advanceLeadStageAction(lead.id, target);
     setBusy(null);
+    if (result?.error) {
+      toast.error("Could not update lead", { description: result.error });
+      return;
+    }
     onChanged();
     toast.success(lead.status === "lost" ? "Lead unarchived" : "Lead archived", {
       description: `${lead.contact_name ?? lead.company_name} has been ${lead.status === "lost" ? "restored" : "archived"}.`,
@@ -207,9 +225,14 @@ function LeadDetailPanelInner({
   }
 
   async function remove() {
+    if (!window.confirm(`Delete ${lead.contact_name ?? lead.company_name}? This cannot be undone.`)) return;
     setBusy("delete");
-    await deleteLeadAction(lead.id);
+    const result = await deleteLeadAction(lead.id);
     setBusy(null);
+    if (result?.error) {
+      toast.error("Could not delete lead", { description: result.error });
+      return;
+    }
     onOpenChange(false);
     onChanged();
     toast.success("Lead deleted", {
@@ -242,7 +265,7 @@ function LeadDetailPanelInner({
                       stageTone[lead.status]
                     )}
                   />
-                  {lead.status}
+                  {STAGE_LABELS[lead.status]}
                 </Badge>
                 {lead.source && (
                   <Badge variant="outline" size="sm">
@@ -389,7 +412,7 @@ function LeadDetailPanelInner({
                 "Updating..."
               ) : (
                 <>
-                  Move to {next}
+                  Move to {STAGE_LABELS[next]}
                   <ChevronRight />
                 </>
               )}
@@ -575,7 +598,7 @@ function LeadsBrowser({
               onValueChange={(v) => setStage(v as LeadStatus | "all")}
               options={[
                 { value: "all", label: "All statuses" },
-                ...STAGES.map((s) => ({ value: s, label: s })),
+                ...STAGES.map((s) => ({ value: s, label: STAGE_LABELS[s] })),
               ]}
             />
           </div>
@@ -795,7 +818,7 @@ function LeadsBrowser({
                         )}
                       >
                         <span className="size-1.5 rounded-full bg-current" />
-                        {lead.status}
+                        {STAGE_LABELS[lead.status]}
                       </span>
                     </td>
 

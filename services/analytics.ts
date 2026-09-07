@@ -26,12 +26,19 @@ export interface MonthlyPoint {
   count: number;
 }
 
-export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
+async function getUserId() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return { supabase, userId: user?.id ?? null };
+}
+
+export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
+  const { supabase, userId } = await getUserId();
+  if (!userId) return { total: 0, hot: 0, warm: 0, cold: 0, activeCampaigns: 0 };
 
   const [{ data: leads }, { data: campaigns }] = await Promise.all([
-    supabase.from("leads").select("id, temperature"),
-    supabase.from("campaigns").select("id, status").eq("status", "active"),
+    supabase.from("leads").select("id, temperature").eq("user_id", userId),
+    supabase.from("campaigns").select("id, status").eq("user_id", userId).eq("status", "active"),
   ]);
 
   const leadRows = leads ?? [];
@@ -45,10 +52,13 @@ export async function getAnalyticsMetrics(): Promise<AnalyticsMetrics> {
 }
 
 export async function getLeadGrowthSeries(months = 12): Promise<MonthlyPoint[]> {
-  const supabase = await createClient();
+  const { supabase, userId } = await getUserId();
+  if (!userId) return [];
+
   const { data, error } = await supabase
     .from("leads")
     .select("created_at")
+    .eq("user_id", userId)
     .order("created_at", { ascending: true });
 
   if (error || !data || data.length === 0) return [];
@@ -86,10 +96,13 @@ export async function getLeadGrowthSeries(months = 12): Promise<MonthlyPoint[]> 
 export async function getTemperatureDistribution(): Promise<
   Record<Temperature, number>
 > {
-  const supabase = await createClient();
+  const { supabase, userId } = await getUserId();
+  if (!userId) return { hot: 0, warm: 0, cold: 0 };
+
   const { data, error } = await supabase
     .from("leads")
-    .select("id, temperature");
+    .select("id, temperature")
+    .eq("user_id", userId);
 
   if (error || !data) return { hot: 0, warm: 0, cold: 0 };
 
@@ -103,10 +116,13 @@ export async function getTemperatureDistribution(): Promise<
 export async function getLeadStatusBreakdown(): Promise<
   Record<LeadStatus, number>
 > {
-  const supabase = await createClient();
+  const { supabase, userId } = await getUserId();
+  if (!userId) return { new: 0, contacted: 0, replied: 0, qualified: 0, won: 0, lost: 0 };
+
   const { data, error } = await supabase
     .from("leads")
-    .select("id, status");
+    .select("id, status")
+    .eq("user_id", userId);
 
   if (error || !data) {
     return { new: 0, contacted: 0, replied: 0, qualified: 0, won: 0, lost: 0 };
@@ -125,10 +141,13 @@ export async function getLeadStatusBreakdown(): Promise<
 export async function getIndustryBreakdown(
   limit = 5
 ): Promise<{ label: string; value: number }[]> {
-  const supabase = await createClient();
+  const { supabase, userId } = await getUserId();
+  if (!userId) return [];
+
   const { data, error } = await supabase
     .from("leads")
-    .select("id, industry");
+    .select("id, industry")
+    .eq("user_id", userId);
 
   if (error || !data) return [];
 
@@ -147,10 +166,13 @@ export async function getIndustryBreakdown(
 export async function getLocationBreakdown(
   limit = 5
 ): Promise<{ label: string; value: number }[]> {
-  const supabase = await createClient();
+  const { supabase, userId } = await getUserId();
+  if (!userId) return [];
+
   const { data, error } = await supabase
     .from("leads")
-    .select("id, location");
+    .select("id, location")
+    .eq("user_id", userId);
 
   if (error || !data) return [];
 
@@ -167,18 +189,21 @@ export async function getLocationBreakdown(
 }
 
 export async function getCampaignStats(): Promise<CampaignStats[]> {
-  const supabase = await createClient();
+  const { supabase, userId } = await getUserId();
+  if (!userId) return [];
 
   const { data: campaigns, error: cmpError } = await supabase
     .from("campaigns")
     .select("id, name, status")
+    .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
   if (cmpError || !campaigns) return [];
 
   const { data: leads, error: leadsError } = await supabase
     .from("leads")
-    .select("id, campaign_id, temperature, status");
+    .select("id, campaign_id, temperature, status")
+    .eq("user_id", userId);
 
   if (leadsError || !leads) return [];
 

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Brain, Lightbulb, Mail, MessageSquare, Target, TrendingUp, CheckCircle2, AlertCircle, Copy, Sparkles, Globe, BarChart3, Users, Zap } from "lucide-react";
+import { Brain, Lightbulb, Mail, MessageSquare, Target, TrendingUp, CheckCircle2, AlertCircle, Copy, Sparkles, Globe, BarChart3, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getLeadAnalysisAction, getWhyThisLeadAction, generateOutreachAction, generateFollowUpAction, getWebsiteAnalysisAction } from "@/app/actions/ai";
@@ -28,46 +28,45 @@ export function LeadIntelligencePanel({ leadId, leadScore, leadTemperature }: Le
   const [copied, setCopied] = React.useState(false);
 
   React.useEffect(() => {
+    let cancelled = false;
+    const done = () => { if (!cancelled) setLoading(false); };
+
     if (activeTab === "analysis" && !analysis) {
       setLoading(true);
       getLeadAnalysisAction(leadId).then((result) => {
-        if (result.data) setAnalysis(result.data);
-        setLoading(false);
-      });
+        if (!cancelled && result.data) setAnalysis(result.data);
+      }).catch(() => {}).finally(done);
     } else if (activeTab === "why" && !whyThisLead) {
       setLoading(true);
       getWhyThisLeadAction(leadId).then((result) => {
-        if (result.data) setWhyThisLead(result.data);
-        setLoading(false);
-      });
+        if (!cancelled && result.data) setWhyThisLead(result.data);
+      }).catch(() => {}).finally(done);
     } else if (activeTab === "outreach" && !outreach) {
       setLoading(true);
       generateOutreachAction(leadId, outreachOptions).then((result) => {
-        if (result.data) setOutreach(result.data);
-        setLoading(false);
-      });
+        if (!cancelled && result.data) setOutreach(result.data);
+      }).catch(() => {}).finally(done);
     } else if (activeTab === "followup" && !followUp) {
       setLoading(true);
       generateFollowUpAction(leadId).then((result) => {
-        if (result.data) setFollowUp(result.data);
-        setLoading(false);
-      });
+        if (!cancelled && result.data) setFollowUp(result.data);
+      }).catch(() => {}).finally(done);
     } else if (activeTab === "website" && !websiteAnalysis) {
       setLoading(true);
       getWebsiteAnalysisAction(leadId).then((result) => {
-        if (result.data) setWebsiteAnalysis(result.data);
-        setLoading(false);
-      });
+        if (!cancelled && result.data) setWebsiteAnalysis(result.data);
+      }).catch(() => {}).finally(done);
     }
-  }, [activeTab, leadId, analysis, whyThisLead, outreach, followUp, outreachOptions, websiteAnalysis]);
+
+    return () => { cancelled = true; };
+  }, [activeTab, leadId]);
 
   const handleRegenerateOutreach = () => {
     setOutreach(null);
     setLoading(true);
     generateOutreachAction(leadId, outreachOptions).then((result) => {
       if (result.data) setOutreach(result.data);
-      setLoading(false);
-    });
+    }).catch(() => {}).finally(() => setLoading(false));
   };
 
   const handleCopy = (text: string) => {
@@ -96,14 +95,14 @@ export function LeadIntelligencePanel({ leadId, leadScore, leadTemperature }: Le
         </div>
       </div>
 
-      <div className="flex border-b border-line">
+      <div className="flex overflow-x-auto border-b border-line scrollbar-none">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-caption font-medium transition-colors ${
+              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap px-4 py-2.5 text-caption font-medium transition-colors ${
                 activeTab === tab.id
                   ? "border-b-2 border-electric-400 text-electric-400"
                   : "text-content-muted hover:text-content"

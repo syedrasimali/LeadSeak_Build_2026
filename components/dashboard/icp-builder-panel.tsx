@@ -11,10 +11,12 @@ export function IcpBuilderPanel() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    getIcpProfileAction().then((result) => {
-      if (result.data) setProfile(result.data);
-      setLoading(false);
-    });
+    getIcpProfileAction()
+      .then((result) => {
+        if (result.data) setProfile(result.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {

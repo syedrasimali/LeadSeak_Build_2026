@@ -118,7 +118,7 @@ function SiteFooter() {
                 Get in touch
               </p>
               <p className="mt-1 text-caption text-content-secondary">
-                alisyedrasim@gmail.com
+                hello@leadseak.app
               </p>
               <div className="mt-3 flex gap-3">
                 <a

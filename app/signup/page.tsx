@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Building2, Lock, Mail, User } from "lucide-react";
 import { AuthShell } from "@/components/layout/auth-shell";
@@ -11,14 +11,17 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/client";
 import { friendlyError, useGoogleAuth } from "@/hooks/use-auth";
+import { Suspense } from "react";
 
 type Status = "idle" | "loading" | "error";
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const prefilledEmail = searchParams.get("email") ?? "";
   const [status, setStatus] = React.useState<Status>("idle");
   const [message, setMessage] = React.useState("");
-  const { signInWithGoogle, loading: googleLoading } = useGoogleAuth();
+  const { signInWithGoogle, loading: googleLoading, error: googleError } = useGoogleAuth();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -155,6 +158,7 @@ export default function SignupPage() {
             name="email"
             type="email"
             required
+            defaultValue={prefilledEmail}
             placeholder="you@company.com"
             autoComplete="email"
             leadingIcon={<Mail />}
@@ -191,6 +195,15 @@ export default function SignupPage() {
           </p>
         )}
 
+        {googleError && (
+          <p
+            role="alert"
+            className="rounded-md border border-danger/28 bg-danger/[0.08] px-3 py-2 text-caption text-danger-soft"
+          >
+            {googleError}
+          </p>
+        )}
+
         {status === "idle" && message && (
           <p
             className="rounded-md border border-success/28 bg-success/[0.08] px-3 py-2 text-caption text-success"
@@ -215,5 +228,13 @@ export default function SignupPage() {
         </p>
       </form>
     </AuthShell>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   );
 }
