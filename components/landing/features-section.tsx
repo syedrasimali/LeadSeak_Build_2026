@@ -400,10 +400,10 @@ function FeaturesSection() {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-7xl px-6 py-24 sm:px-10 sm:py-32">
+      <div className="relative mx-auto w-full max-w-7xl px-5 py-16 sm:px-10 sm:py-32">
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="text-overline uppercase text-electric-400">Features</p>
-          <h2 className="mt-3 text-h2 text-content sm:text-h1">
+          <h2 className="mt-3 text-h3 text-content sm:text-h2 lg:text-h1">
             Meet the full prospect
             <br />
             <span className="text-gradient-electric">research experience.</span>

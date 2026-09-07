@@ -93,7 +93,7 @@ function DashboardShell({ children, leadCount }: { children: React.ReactNode; le
               </DialogPrimitive.Title>
               <DialogPrimitive.Close
                 aria-label="Close navigation"
-                className="absolute right-3 top-4 grid size-8 place-items-center rounded-md text-content-muted transition-colors hover:bg-white/[0.06] hover:text-content"
+                className="absolute right-3 top-4 grid size-10 place-items-center rounded-md text-content-muted transition-colors hover:bg-white/[0.06] hover:text-content"
               >
                 <X className="size-4" />
               </DialogPrimitive.Close>

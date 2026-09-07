@@ -114,7 +114,7 @@ function TrustSection() {
       <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="text-overline uppercase text-electric-400">Solutions</p>
-          <h2 className="mt-3 text-h2 text-content">
+          <h2 className="mt-3 text-h3 text-content sm:text-h2">
             Designed around how prospecting actually works.
           </h2>
           <p className="mt-4 text-body text-content-secondary">

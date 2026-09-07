@@ -94,7 +94,7 @@ function MetricCard({
         )}
       </div>
 
-      <p className="relative mt-2.5 font-mono text-h2 leading-none tracking-tight text-content">
+      <p className="relative mt-2.5 font-mono text-h2 leading-none tracking-tight text-content truncate">
         {value}
       </p>
 

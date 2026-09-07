@@ -102,7 +102,7 @@ function NotificationPanel({
   return (
     <div
       ref={panelRef}
-      className="absolute right-0 top-full z-50 mt-2 w-80 origin-top-right rounded-xl border border-line bg-surface-elevated shadow-overlay animate-in fade-in-0 zoom-in-95 duration-150"
+      className="absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] origin-top-right rounded-xl border border-line bg-surface-elevated shadow-overlay animate-in fade-in-0 zoom-in-95 duration-150"
     >
       <div className="flex items-center justify-between border-b border-line px-4 py-3">
         <div>

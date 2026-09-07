@@ -66,11 +66,11 @@ function FinalCta() {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-4xl px-6 py-28 sm:px-10 sm:py-36">
+      <div className="relative mx-auto w-full max-w-4xl px-5 py-20 sm:px-10 sm:py-36">
         <Reveal className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <h2
             ref={headingRef}
-            className="text-h2 text-content sm:text-display"
+            className="text-3xl text-content sm:text-h2 lg:text-display"
           >
             <span className="cta-word inline-block" style={{ opacity: reduced ? 1 : undefined }}>
               Outrank Everyone.

@@ -53,7 +53,7 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
         <button
           id={btnId}
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+          className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left sm:px-6 sm:py-5"
           aria-expanded={open}
           aria-controls={panelId}
         >
@@ -75,7 +75,7 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
           )}
         >
           <div className="overflow-hidden">
-            <p className="px-6 pb-5 text-small text-content-secondary leading-relaxed">
+            <p className="px-4 pb-4 text-small text-content-secondary leading-relaxed sm:px-6 sm:pb-5">
               {a}
             </p>
           </div>
@@ -130,10 +130,10 @@ function FaqSection() {
     >
       <div aria-hidden className="absolute inset-0 floating-particles opacity-50" />
 
-      <div className="relative mx-auto w-full max-w-3xl px-6 py-24 sm:px-10 sm:py-32">
+      <div className="relative mx-auto w-full max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
         <Reveal className="text-center">
           <p className="text-overline uppercase text-electric-400">FAQ</p>
-          <h2 className="mt-3 text-h2 text-content sm:text-h1">
+          <h2 className="mt-3 text-h3 text-content sm:text-h2 lg:text-h1">
             Frequently asked questions
           </h2>
           <p className="mt-4 text-body text-content-secondary">

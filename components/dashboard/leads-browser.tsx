@@ -15,6 +15,7 @@ import {
   MapPin,
   MapPinned,
   Phone,
+  SlidersHorizontal,
   Sparkles,
   UserRound,
   X,
@@ -468,6 +469,7 @@ function LeadsBrowser({
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const [activeLead, setActiveLead] = React.useState<Lead | null>(null);
   const [panelOpen, setPanelOpen] = React.useState(false);
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
 
   const filtered = React.useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -577,6 +579,25 @@ function LeadsBrowser({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setFiltersOpen((v) => !v)}
+            className="lg:hidden"
+          >
+            <SlidersHorizontal className="size-3.5" />
+            Filters
+            {hasFilters && (
+              <span className="ml-1.5 grid size-4 place-items-center rounded-full bg-electric-500 text-[0.625rem] font-bold text-white">
+                {[temp, stage, campaignFilter, industryFilter, locationFilter].filter((v) => v !== "all").length}
+              </span>
+            )}
+          </Button>
+
+          <div className={cn(
+            "flex w-full flex-wrap items-center gap-2.5 lg:w-auto lg:flex-1",
+            !filtersOpen && "hidden lg:flex"
+          )}>
           <div className="min-w-28 flex-1 sm:flex-none sm:w-32">
             <LabeledSelect
               aria-label="Filter by temperature"
@@ -676,6 +697,7 @@ function LeadsBrowser({
               Clear
             </Button>
           )}
+          </div>
         </div>
       </div>
 

@@ -53,7 +53,7 @@ function DialogContent({
         {showClose && (
           <DialogPrimitive.Close
             className={cn(
-              "absolute right-4 top-4 grid size-8 place-items-center rounded-md text-content-muted",
+              "absolute right-3 top-3 grid size-10 place-items-center rounded-md text-content-muted",
               "transition-colors duration-200 hover:bg-white/[0.06] hover:text-content",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-500"
             )}

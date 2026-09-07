@@ -36,7 +36,7 @@ function NavLink({
       aria-current={active ? "page" : undefined}
       style={inlineStyle}
       className={cn(
-        "group relative flex items-center gap-3 rounded-md px-3 py-2 text-small font-medium",
+        "group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-small font-medium",
         "transition-all duration-200 ease-swift",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-electric-500",
         "hover:translate-x-0.5",

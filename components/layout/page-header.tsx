@@ -68,7 +68,7 @@ function PageHeader({
           </p>
         )}
         <h2
-          className="text-h2 text-content"
+          className="text-h3 text-content sm:text-h2"
           style={reduced ? undefined : { opacity: 0 }}
         >
           {title}
@@ -84,7 +84,7 @@ function PageHeader({
       </div>
       {actions && (
         <div
-          className="flex shrink-0 items-center gap-2.5"
+          className="flex shrink-0 flex-wrap items-center gap-2.5"
           style={reduced ? undefined : { opacity: 0 }}
         >
           {actions}

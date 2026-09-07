@@ -211,7 +211,7 @@ function Hero() {
 
       {/* Content */}
       <div
-        className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-6 pb-20 pt-36 sm:px-10 sm:pb-28 sm:pt-44"
+        className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-5 pb-16 pt-28 sm:px-10 sm:pb-28 sm:pt-44"
         style={{ zIndex: 100 }}
       >
         <div className="flex max-w-3xl flex-col items-center text-center">
@@ -224,7 +224,7 @@ function Hero() {
 
           <Reveal load delay={280}>
             <h1
-              className="mt-8 text-h1 font-bold tracking-tight sm:text-display"
+              className="mt-6 text-3xl font-bold tracking-tight sm:text-h1 md:text-display"
               style={{
                 background: "linear-gradient(180deg, #eaeff8 22%, rgba(234,239,248,0.7) 100%)",
                 WebkitBackgroundClip: "text",
@@ -239,7 +239,7 @@ function Hero() {
           </Reveal>
 
           <Reveal load delay={420}>
-            <p className="mt-6 max-w-xl text-body-lg" style={{ color: "rgb(154, 166, 189)" }}>
+            <p className="mt-5 max-w-xl text-body text-content-secondary" style={{ color: "rgb(154, 166, 189)" }}>
               Discover qualified prospects with AI, enrich every lead with
               actionable intelligence, and convert more deals — all from one
               powerful platform.
@@ -248,7 +248,7 @@ function Hero() {
 
           <Reveal load delay={560} className="mt-10">
             <SmartCtaLink
-              className="group relative inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3 text-small font-medium text-content transition-all duration-500 hover:border-white/[0.18] shimmer-btn focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-electric-500"
+              className="group relative inline-flex items-center gap-2 rounded-full border border-white/[0.1] px-6 py-3.5 text-small font-medium text-content transition-all duration-500 hover:border-white/[0.18] shimmer-btn focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-electric-500"
               style={{
                 background:
                   "radial-gradient(107% 107% at 50% 215%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%), rgba(255,255,255,0.04)",

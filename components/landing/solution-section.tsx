@@ -113,7 +113,7 @@ function SolutionSection() {
           <p className="text-overline uppercase text-electric-400">
             How it works
           </p>
-          <h2 className="mt-3 text-h2 text-content">
+          <h2 className="mt-3 text-h3 text-content sm:text-h2">
             One pass, start to pipeline.
           </h2>
           <p className="mt-4 text-body text-content-secondary">

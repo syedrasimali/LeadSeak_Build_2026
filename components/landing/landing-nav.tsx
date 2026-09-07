@@ -77,7 +77,7 @@ function LandingNav() {
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link href="/login">Log In</Link>
             </Button>
-            <Button asChild size="sm" className="glow-border shimmer-btn">
+            <Button asChild size="sm" className="shimmer-btn max-[420px]:px-3 max-[420px]:text-xs">
               <Link href="/signup">Start 14-Day Free Trial</Link>
             </Button>
 
@@ -110,7 +110,7 @@ function LandingNav() {
                 key={link.label}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-3 py-3 text-body font-medium text-content-secondary transition-colors duration-200 hover:bg-white/[0.05] hover:text-content"
+                className="rounded-lg px-3 py-3.5 text-body font-medium text-content-secondary transition-colors duration-200 hover:bg-white/[0.05] hover:text-content"
               >
                 {link.label}
               </a>

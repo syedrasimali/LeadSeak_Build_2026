@@ -82,7 +82,7 @@ export default async function OverviewPage() {
         </div>
       )}
 
-      <MotionGrid className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <MotionGrid className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
         <MetricCard
           label="Total Leads"
           value={leadCounts.total.toLocaleString()}
@@ -119,7 +119,7 @@ export default async function OverviewPage() {
         <DashboardAiInsights leads={leads} leadCounts={leadCounts} />
       </div>
 
-      <div data-reveal-load className="mt-5 grid gap-5 xl:grid-cols-3" style={{ animationDelay: "0.3s" }}>
+      <div data-reveal-load className="mt-5 grid gap-4 lg:grid-cols-3 xl:grid-cols-3" style={{ animationDelay: "0.3s" }}>
         <div className="flex flex-col rounded-xl border border-line bg-surface-elevated transition-shadow duration-300 hover:shadow-[0_0_24px_-8px_rgba(52,120,255,0.08)] xl:col-span-2">
           <div className="flex flex-col gap-3 border-b border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -155,7 +155,7 @@ export default async function OverviewPage() {
         <LeadDistributionDb counts={leadCounts} />
       </div>
 
-      <div data-reveal-load className="mt-5 grid gap-5 xl:grid-cols-2" style={{ animationDelay: "0.45s" }}>
+      <div data-reveal-load className="mt-5 grid gap-4 lg:grid-cols-2 xl:grid-cols-2" style={{ animationDelay: "0.45s" }}>
         <RecentCampaignsDb campaigns={campaigns} />
         <RecentLeadsDb leads={leads} />
       </div>

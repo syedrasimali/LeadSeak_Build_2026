@@ -67,7 +67,7 @@ export default async function LeadsPage() {
         </div>
       )}
 
-      <MotionGrid className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <MotionGrid className="mb-5 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
         <MetricCard
           label="Total Leads"
           value={counts.total.toLocaleString()}
