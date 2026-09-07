@@ -117,9 +117,9 @@ function SiteFooter() {
               <p className="text-caption font-medium text-content">
                 Get in touch
               </p>
-              <p className="mt-1 text-caption text-content-secondary">
-                hello@leadseak.app
-              </p>
+              <a href="mailto:alisyedrasim@gmail.com" className="mt-1 text-caption text-content-secondary transition-colors hover:text-electric-400">
+                alisyedrasim@gmail.com
+              </a>
               <div className="mt-3 flex gap-3">
                 <a
                   href="https://x.com/jaffery_for"
